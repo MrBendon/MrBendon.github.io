@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2024-01-03T15:50:29.855Z</updated>
+  <updated>2024-01-03T16:11:29.563Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>什麼是 useCllback ？</title>
+    <link href="http://example.com/2024/01/04/useCllback/"/>
+    <id>http://example.com/2024/01/04/useCllback/</id>
+    <published>2024-01-03T16:06:51.000Z</published>
+    <updated>2024-01-03T16:11:29.563Z</updated>
+    
+    <content type="html"><![CDATA[<p>在 react 的渲染機制中，只要 React 元件內的資料狀態(state)有變動時，整個用來產生 React 元件的 Function 都會再重新執行一次．又或者，當父元件有資料狀態改變時，子元件也是會跟著重新渲染（re-render)。</p><p>但如果今天有一個情形是，子元件接受數個父元件傳來 props，但傳過來的這些 props 並沒有發生改變，改變的可能只是父元件中其他的狀態（就是傳給子元件的那幾個沒有被變動到），但即便如此，由於父元件需要重新渲染，因此即便傳過來的狀態一樣，但子元件仍然需要一起重新渲染．</p><p>這可能會發生什麼問題，假如子元件中沒有什麼需要消耗性能的繁重計算，那可能重新渲染的影響不大．但如果是一個需要繁重計算或者需要大量性能的函式呢？像是子元件中如果有包含以下但不限於：</p><ul><li>大型數據的迴圈計算（特別是在每次迴圈中進行複雜的數據處理或計算，若有多重嵌套回圈則可能會會導致計算的指數級增長）</li><li>頻繁的添加移除修改ＤＯＭ元素（例如透過ＪＳ動態大量生成表單、表格與使用者互動時）</li><li>有很多或複雜的動畫效果</li><li>對大型圖像或很多圖像進行處理</li></ul><p>上述狀況都有可能會影響到渲染效能，因此如果父元件重新渲染了，但子元件其實狀態不需要再次改變的情況下，我們可以借助 useCallback 這個方式來避免這個成本高的計算但「不必要的重新渲染」．進而提升渲染效率。</p><p>useCallback 的運作方式和 useMemo 很像，函式的樣子和 useEffect 也很像。</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> cachedFn = <span class="title function_">useCallback</span>(fn, dependencies)<span class="string">``</span><span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">以上是useCallback的使用方式，cachedFn會記憶useCallback所包含著的函式計算結果，並且只有在dependencies (array的形式，像是一個檢查清單）內的項目有改變時，才會去重新執行fn，換言之，若dependencies中的項目都沒有改變過，則fn不會重新計算（不會被觸發），而cachedFn會得到之前的計算結果，與舊值相同。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">fn為可以接受任何參數並且傳回任何值的函數，不一定要是產生元件的function，也可以是元件中相對消耗效能的function。這一個fn會在react初次渲染而非呼叫時傳回該函數時，會執行一次，當元件進行下一次渲染時，如果dependencies相較於上一次渲染時沒有改變，那麼React 將會傳回相同的函數。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">dependencies的形式為一個array，例如：[dep1, dep2, dep3]，如果陣列中的項目沒有改變，則fn不會執行．要注意的是，React判斷「dep1有沒有改變」是使用Object.is的方法來比對新的dep1和舊值dep1。所以要注意一下Object.is比較的結果或特性。如果dependencies放入一個空的陣列，則代表每一次渲染都還是會重新計算（react在檢查清單中</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">那麼說說useCallback 和 useMemo的異同。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">**同樣的部分：**</span></span><br><span class="line"><span class="string">他們都是為了要提升渲染效能有關的，它們的主要作用是緩存（memoize）一些值或函式，以避免在包住（記憶）的值或函示在每次渲染時都會重新計算或再創建．</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">**不一樣的部分**</span></span><br><span class="line"><span class="string">useMemo是用來記憶某一個函示計算的值（結果）．而useCallback則是用來記憶一個函式本身的。</span></span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在 react 的渲染機制中，只要 React 元件內的資料狀態(state)有變動時，整個用來產生 React 元件的 Function 都會再重新執行一次．又或者，當父元件有資料狀態改變時，子元件也是會跟著重新渲染（re-render)。&lt;/p&gt;
+&lt;p&gt;但如果今天有一個</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>什麼是 useEffect ?</title>
