@@ -2,18 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://example.com/2024/01/04/useCllback/</loc>
+    <loc>http://example.com/2023/12/31/useEffect/</loc>
     
-    <lastmod>2024-01-03</lastmod>
+    <lastmod>2024-01-08</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://example.com/2023/12/31/useEffect/</loc>
+    <loc>http://example.com/2024/01/04/useCllback/</loc>
     
-    <lastmod>2024-01-03</lastmod>
+    <lastmod>2024-01-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/2024/01/09/equal/</loc>
+    
+    <lastmod>2024-01-08</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -22,11 +31,18 @@
 
   <url>
     <loc>http://example.com/</loc>
-    <lastmod>2024-01-03</lastmod>
+    <lastmod>2024-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
+  
+  <url>
+    <loc>http://example.com/tags/Object-is-Primitive-Type-Object-Type/</loc>
+    <lastmod>2024-01-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
   
 
   
